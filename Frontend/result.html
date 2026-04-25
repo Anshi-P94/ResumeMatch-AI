@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AI Resume Screening System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2563EB;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #F9FAFB;
+            border-radius: 8px;
+            border-left: 4px solid #2563EB;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #2563EB;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .skill-tag {
+            background: #E0E7FF;
+            color: #3730A3;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .missing-skill {
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        .status-result {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pass {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .fail {
+            background: #FEF2F2;
+            color: #DC2626;
+        }
+
+        .back-btn {
+            background: #6B7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #4B5563;
+        }
+
+        .error {
+            color: #DC2626;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Analysis Results</h1>
+        <div id="results"></div>
+        <button class="back-btn" onclick="window.location.href='index.html'">Back to Home</button>
+    </div>
+
+    <script>
+        // Load result data from localStorage
+        const resultData = localStorage.getItem('resultData');
+
+        if (!resultData) {
+            document.getElementById('results').innerHTML = '<div class="error">No results found. Please analyze a resume first.</div>';
+        } else {
+            try {
+                const data = JSON.parse(resultData);
+
+                const matchedSkillsHtml = data.matched_skills.length > 0 
+                    ? `<div class="skills-list">${data.matched_skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}</div>`
+                    : '<span class="result-value">None</span>';
+
+                const missingSkillsHtml = data.missing_skills.length > 0 
+                    ? `<div class="skills-list">${data.missing_skills.map(skill => `<span class="skill-tag missing-skill">${skill}</span>`).join('')}</div>`
+                    : '<span class="result-value">None</span>';
+
+                const statusClass = data.status === 'PASS' ? 'pass' : 'fail';
+
+                document.getElementById('results').innerHTML = `
+                    <div class="result-item">
+                        <span class="result-label">Match Score</span>
+                        <span class="result-value">${data.match_score}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Predicted Category</span>
+                        <span class="result-value">${data.category}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Matched Skills</span>
+                        ${matchedSkillsHtml}
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Missing Skills</span>
+                        ${missingSkillsHtml}
+                    </div>
+                    <div class="status-result ${statusClass}">${data.status}</div>
+                `;
+            } catch (e) {
+                document.getElementById('results').innerHTML = '<div class="error">Error loading results.</div>';
+            }
+        }
+    </script>
+</body>
+</html>
