@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Screening & Candidate Verification System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563EB;
+        }
+
+        .stat-label {
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        .reset-btn {
+            background: #DC2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #B91C1C;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            flex: 1;
+        }
+
+        .panel h2 {
+            color: #2563EB;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563EB;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #D1D5DB;
+            border-radius: 8px;
+            background: #FAFAFA;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:hover {
+            border-color: #2563EB;
+        }
+
+        .or-divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        .analyze-btn {
+            background: #2563EB;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 30px auto;
+            display: block;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            background: #1D4ED8;
+        }
+
+        .analyze-btn:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #F0F9FF;
+            border-radius: 8px;
+            border-left: 4px solid #2563EB;
+            text-align: center;
+        }
+
+        .result-item {
+            margin-bottom: 12px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .result-value {
+            color: #2563EB;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .pass-fail {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .pass {
+            color: #059669;
+        }
+
+        .fail {
+            color: #DC2626;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 12px;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 8px;
+            color: #DC2626;
+            text-align: center;
+        }
+
+        .loading {
+            margin-top: 20px;
+            color: #6B7280;
+            font-style: italic;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .panel {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .stats-grid {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- System Stats -->
+    <div class="stats-section">
+        <h2 style="color: #2563EB; margin-bottom: 15px;">System Stats</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-value" id="totalScans">0</div>
+                <div class="stat-label">Total Resumes Scanned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalMatches">0</div>
+                <div class="stat-label">Total Matches (PASS)</div>
+            </div>
+        </div>
+        <button class="reset-btn" id="resetBtn">Reset Stats</button>
+    </div>
+
+    <div class="container">
+        <!-- HR Panel -->
+        <div class="panel">
+            <h2>HR Panel</h2>
+
+            <div class="form-group">
+                <label for="hrName">HR Name</label>
+                <input type="text" id="hrName" placeholder="Enter HR name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="company">Company/Institute</label>
+                <input type="text" id="company" placeholder="Enter company or institute" required>
+            </div>
+
+            <div class="form-group">
+                <label for="jobDescription">Job Description</label>
+                <textarea id="jobDescription" placeholder="Enter detailed job description..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="skills">Required Skills (comma-separated)</label>
+                <input type="text" id="skills" placeholder="e.g., Python, Machine Learning, SQL" required>
+            </div>
+
+            <div class="form-group">
+                <label for="threshold">Match Threshold (%)</label>
+                <input type="number" id="threshold" placeholder="70" min="0" max="100" value="70" required>
+            </div>
+        </div>
+
+        <!-- Candidate Panel -->
+        <div class="panel">
+            <h2>Candidate Panel</h2>
+
+            <div class="form-group">
+                <label for="candidateName">Candidate Name</label>
+                <input type="text" id="candidateName" placeholder="Enter candidate name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="resume">Upload Resume (PDF)</label>
+                <input type="file" id="resume" accept=".pdf">
+            </div>
+
+            <div class="or-divider">OR</div>
+
+            <div class="form-group">
+                <label for="pastedText">Paste Resume Text</label>
+                <textarea id="pastedText" placeholder="Paste resume content here if no PDF file..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analyze Button -->
+    <button type="button" id="analyzeBtn" class="analyze-btn">Analyze Match</button>
+
+    <!-- Messages -->
+    <div id="loading" class="loading" style="display: none;">Analyzing...</div>
+    <div id="error" class="error" style="display: none;"></div>
+
+    <script>
+        // Initialize stats from localStorage
+        let totalScans = parseInt(localStorage.getItem('totalScans')) || 0;
+        let totalMatches = parseInt(localStorage.getItem('totalMatches')) || 0;
+
+        function updateStatsDisplay() {
+            document.getElementById('totalScans').textContent = totalScans;
+            document.getElementById('totalMatches').textContent = totalMatches;
+        }
+
+        // Update display on load
+        updateStatsDisplay();
+
+        // Reset stats button
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            totalScans = 0;
+            totalMatches = 0;
+            localStorage.setItem('totalScans', totalScans);
+            localStorage.setItem('totalMatches', totalMatches);
+            updateStatsDisplay();
+        });
+
+        document.getElementById('analyzeBtn').addEventListener('click', async function() {
+            const hrName = document.getElementById('hrName').value.trim();
+            const company = document.getElementById('company').value.trim();
+            const jobDescription = document.getElementById('jobDescription').value.trim();
+            const skills = document.getElementById('skills').value.trim();
+            const threshold = parseInt(document.getElementById('threshold').value);
+            const candidateName = document.getElementById('candidateName').value.trim();
+            const resumeFile = document.getElementById('resume').files[0];
+            const pastedText = document.getElementById('pastedText').value.trim();
+
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+
+            // Reset displays
+            loading.style.display = 'none';
+            error.style.display = 'none';
+
+            // Validation
+            if (!hrName || !company || !jobDescription || !skills || isNaN(threshold) || !candidateName) {
+                error.textContent = 'Please fill in all required fields.';
+                error.style.display = 'block';
+                return;
+            }
+
+            if (!resumeFile && !pastedText) {
+                error.textContent = 'Please upload a resume PDF or paste resume text.';
+                error.style.display = 'block';
+                return;
+            }
+
+            // Show loading state
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = 'Analyzing...';
+            loading.style.display = 'block';
+
+            // Prepare form data
+            const formData = new FormData();
+            if (resumeFile) {
+                formData.append('resume', resumeFile);
+            }
+            formData.append('job_description', jobDescription);
+            formData.append('candidate_name', candidateName);
+            formData.append('hr_name', hrName);
+            formData.append('skills', skills);
+            formData.append('threshold', threshold.toString());
+            if (pastedText) {
+                formData.append('pasted_text', pastedText);
+            }
+
+            try {
+                // Send request to backend
+                const response = await fetch('http://127.0.0.1:5000/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update stats
+                    totalScans++;
+                    if (data.status === 'PASS') {
+                        totalMatches++;
+                    }
+                    localStorage.setItem('totalScans', totalScans);
+                    localStorage.setItem('totalMatches', totalMatches);
+                    updateStatsDisplay();
+
+                    // Store result data and redirect
+                    localStorage.setItem('resultData', JSON.stringify(data));
+                    window.location.href = 'result.html';
+                } else {
+                    // Display error
+                    error.textContent = data.error || 'An error occurred while analyzing the resume.';
+                    error.style.display = 'block';
+                }
+            } catch (err) {
+                // Network or other error
+                error.textContent = 'Failed to connect to the server. Please try again.';
+                error.style.display = 'block';
+            } finally {
+                // Reset loading state
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = 'Analyze Match';
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

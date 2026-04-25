@@ -1,0 +1,5 @@
+flask
+flask-cors
+pdfplumber
+scikit-learn
+gunicorn
