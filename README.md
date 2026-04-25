@@ -1,10 +1,7 @@
 # ResumeMatch-AI
 AI-powered Resume Screening System that analyzes candidate resumes against job descriptions using NLP, skill matching, and machine learning to generate match scores and hiring decisions.
 Making hiring smarter with AI-driven resume analysis.
-<<<<<<< HEAD
-=======
 
->>>>>>> b905965e61b87962ef27400e1fa5d94b147e2998
 # AI Resume Screening & Candidate Verification System
 
 ## Overview
@@ -75,8 +72,8 @@ It helps HR professionals quickly evaluate candidates by generating:
 ---
 
 ## Live Demo
-Frontend: https://your-frontend-url  
-Backend: https://your-backend-url
+Frontend: resume-match-ai-five.vercel.app  
+Backend: https: https://resumematch-ai-0jw6.onrender.com
 
 ---
 
@@ -89,13 +86,10 @@ Backend: https://your-backend-url
 ---
 
 ## Developed By
-<<<<<<< HEAD
-Anshi_P (Mini Project - Applied AI)
-=======
+Anshi_P (Mini Project - Applied AI
 Team of Anshi_P (Mini Project - Applied AI)
 
 ---
 
 ## Submission
 April 2026
->>>>>>> b905965e61b87962ef27400e1fa5d94b147e2998
