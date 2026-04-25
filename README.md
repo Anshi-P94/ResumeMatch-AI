@@ -73,7 +73,7 @@ It helps HR professionals quickly evaluate candidates by generating:
 
 ## Live Demo
 Frontend: resume-match-ai-five.vercel.app  
-Backend: https: https://resumematch-ai-0jw6.onrender.com
+Backend: https://resumematch-ai-0jw6.onrender.com
 
 ---
 
