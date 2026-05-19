@@ -86,8 +86,7 @@ Backend: https://resumematch-ai-0jw6.onrender.com
 ---
 
 ## Developed By
-Anshi_P (Mini Project - Applied AI
-Team of Anshi_P (Mini Project - Applied AI)
+Anshi_P (Mini Project - Applied AI)
 
 ---
 
